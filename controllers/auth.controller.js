@@ -79,9 +79,11 @@ exports.login = async (req, res, next) => {
     );
 
     res.cookie('token', token, {
-      httpOnly: true,
-      sameSite: 'lax'
-    });
+    httpOnly: true,
+    secure: true,      // ⬅️ WAJIB karena Railway HTTPS
+    sameSite: 'none',  // ⬅️ WAJIB untuk cross-origin
+    maxAge: 30 * 60 * 1000 // 30 menit (opsional, sesuai JWT)
+});
 
     res.json({
       id: user.id,

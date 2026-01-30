@@ -8,14 +8,21 @@ const app = express();
 
 /**
  * =========================
+ * TAMBAHAN WAJIB (Railway)
+ * =========================
+ */
+app.set('trust proxy', 1); // ⬅️ TAMBAH INI
+
+/**
+ * =========================
  * MIDDLEWARE GLOBAL
  * =========================
  */
 
 // Security headers
-app.use(helmet({ crossOriginResourcePolicy: false }))
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
-// CORS (WAJIB di atas routes)
+// CORS (tetap pakai yang lama, TIDAK diubah)
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
@@ -35,7 +42,16 @@ app.use('/uploads', express.static('uploads'));
 
 /**
  * =========================
- * ROUTES
+ * TAMBAHAN TEST ENDPOINT
+ * =========================
+ */
+app.get('/ping', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+/**
+ * =========================
+ * ROUTES (TIDAK DIUBAH)
  * =========================
  */
 app.use('/api/auth', require('./routes/auth.route'));
@@ -46,7 +62,7 @@ app.use('/api/news', require('./routes/news.route'));
 
 /**
  * =========================
- * ERROR HANDLER (HARUS PALING BAWAH)
+ * ERROR HANDLER (TETAP)
  * =========================
  */
 app.use(require('./middlewares/error'));
