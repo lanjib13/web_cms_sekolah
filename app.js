@@ -11,7 +11,7 @@ const app = express();
  * TAMBAHAN WAJIB (Railway)
  * =========================
  */
-app.set('trust proxy', 1); // ⬅️ TAMBAH INI
+app.set('trust proxy', 1);
 
 /**
  * =========================
@@ -51,14 +51,29 @@ app.get('/ping', (req, res) => {
 
 /**
  * =========================
- * ROUTES (TIDAK DIUBAH)
+ * ROUTE SAFE LOADER (TAMBAHAN)
  * =========================
  */
-app.use('/api/auth', require('./routes/auth.route'));
-app.use('/api/profile', require('./routes/profile.route'));
-app.use('/api/gallery', require('./routes/gallery.route'));
-app.use('/api/teachers', require('./routes/teachers.route'));
-app.use('/api/news', require('./routes/news.route'));
+function safeRoute(path, routePath) {
+  try {
+    console.log(`Loading route: ${routePath}`);
+    app.use(path, require(routePath));
+    console.log(`✅ Loaded: ${routePath}`);
+  } catch (err) {
+    console.error(`❌ FAILED loading ${routePath}`, err);
+  }
+}
+
+/**
+ * =========================
+ * ROUTES (TIDAK DIUBAH, HANYA DIBUNGKUS)
+ * =========================
+ */
+safeRoute('/api/auth', './routes/auth.route');
+safeRoute('/api/profile', './routes/profile.route');
+safeRoute('/api/gallery', './routes/gallery.route');
+safeRoute('/api/teachers', './routes/teachers.route');
+safeRoute('/api/news', './routes/news.route');
 
 /**
  * =========================
@@ -66,5 +81,7 @@ app.use('/api/news', require('./routes/news.route'));
  * =========================
  */
 app.use(require('./middlewares/error'));
+
+console.log('✅ App initialized');
 
 module.exports = app;
