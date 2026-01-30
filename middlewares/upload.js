@@ -16,47 +16,50 @@ const imageFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-const storage = folder => {
-  const uploadPath = path.join('uploads', folder);
-  ensureDir(uploadPath);
+const storage = folder =>
+  multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadPath = path.join(process.cwd(), 'uploads', folder);
 
-  return multer.diskStorage({
-    destination: (_, __, cb) => cb(null, uploadPath),
-    filename: (_, file, cb) => {
+      // 🔥 PINDAH KE SINI (SAAT REQUEST, BUKAN REQUIRE)
+      ensureDir(uploadPath);
+
+      cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
       const ext = path.extname(file.originalname);
       cb(null, Date.now() + ext);
-    }
+    },
   });
-};
 
 /* =========================
-   FINAL EXPORTS (FIELD FIXED)
+   FINAL EXPORTS (SAFE)
 ========================= */
 
-// PROFILE (headmaster_photo)
+// PROFILE
 exports.uploadHeadmaster = multer({
   storage: storage('headmaster'),
   fileFilter: imageFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 },
 }).single('headmaster_photo');
 
-// GALLERY (photo)
+// GALLERY
 exports.uploadGallery = multer({
   storage: storage('gallery'),
   fileFilter: imageFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 },
 }).single('photo');
 
-// TEACHERS (photo)
+// TEACHERS
 exports.uploadTeachers = multer({
   storage: storage('teachers'),
   fileFilter: imageFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 },
 }).single('photo');
 
-// NEWS (photo)
+// NEWS
 exports.uploadNews = multer({
   storage: storage('news'),
   fileFilter: imageFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 },
 }).single('photo');
